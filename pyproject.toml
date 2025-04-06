@@ -37,7 +37,7 @@ Issues = "https://github.com/ben-nowacki/neware-utils/issues"
 
 
 [tool.setuptools.packages.find]
-where = ["neware_utils"]
-
+where = ["."]
+include = ["neware_utils"]
 
 [tool.setuptools_scm]

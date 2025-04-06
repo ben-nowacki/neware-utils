@@ -406,3 +406,5 @@ neware_utils/neware_utils.egg-info/PKG-INFO
 neware_utils/neware_utils.egg-info/requires.txt
 neware_utils/neware_utils.egg-info/SOURCES.txt
 neware_utils/neware_utils.egg-info/top_level.txt
+dist/neware_utils-0.1.3-py3-none-any.whl
+dist/neware_utils-0.1.3.tar.gz
