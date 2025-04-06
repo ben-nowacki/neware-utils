@@ -399,3 +399,10 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 .DS_Store
+dist/neware_utils-0.1.0-py3-none-any.whl
+dist/neware_utils-0.1.0.tar.gz
+neware_utils/neware_utils.egg-info/dependency_links.txt
+neware_utils/neware_utils.egg-info/PKG-INFO
+neware_utils/neware_utils.egg-info/requires.txt
+neware_utils/neware_utils.egg-info/SOURCES.txt
+neware_utils/neware_utils.egg-info/top_level.txt
