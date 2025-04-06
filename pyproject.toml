@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 
 [project]
-name = "neware_utils"
+name = "neware-utils"
 dynamic = ["version"]
 description = "Utilities for creating Neware battery cycling protocols"
 readme = "README.md"
