@@ -15,6 +15,10 @@ class Protocol:
     builder_name: str
     protocol_description: str
 
+    version:int = 17                                                    # TODO: not sure what this version refers to
+    bts_client_version:str = "BTS Client 8.0.0.478(2024.06.24)(R3)"
+    guid:str = "5b93f8b6-71f5-49bc-a83b-0bbe6087903e"                   # TODO: not sure what this is? BTS Client GUI version?
+
     steps: Dict[int, "NewareStep"] = field(default_factory=dict)
 
     record_attr: Optional[Dict[str, Dict[str, Dict[str, float]]]] = None
@@ -202,10 +206,10 @@ class Protocol:
             root, 
             "config", 
             type="Step File",
-            version="17",
-            client_version="BTS Client 8.0.0.478(2024.06.24)(R3)",
+            version=str(self.version),
+            client_version=str(self.bts_client_version),
             date=datetime.today().strftime("%Y%m%d%H%M%S"),
-            Guid="5b93f8b6-71f5-49bc-a83b-0bbe6087903e"			# TODO: not sure what this is? BTS Client GUI version?
+            Guid=str(self.guid)
         )
         #endregion
 
@@ -307,7 +311,6 @@ class Protocol:
 
         return root
     
-
     def export(self, filepath:Path):
         """Exports the current protocol to the defined filepath."""
         if not filepath.suffix.lower() == '.xml':
@@ -315,13 +318,8 @@ class Protocol:
 
         tree = ET.ElementTree(self.to_xml())
         with open(filepath, "wb") as file:
-            # file.write(b'<?xml version="1.0" encoding="GB2312"?>\n')    # Manually add XML declaration
             tree.write(file, encoding="GB2312")
 
-        
-        # xml_declaration = '<?xml version="1.0" encoding="GB2312"?>\n'
-        # xml_string = xml_declaration + ET.tostring(root, encoding="unicode")
-        # return xml_string
 
 
 

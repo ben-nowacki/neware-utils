@@ -6,5 +6,4 @@ from neware_utils.protocols.protocol import Protocol
 __all__ = [
     "CC_CHG", "CV_CHG", "CCCV_CHG", "CC_DCHG", "CV_DCHG", "CCCV_DCHG", "REST", "CYCLE", "PAUSE", "END",
     "Protocol"
-]  
-
+]

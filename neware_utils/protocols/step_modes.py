@@ -44,7 +44,6 @@ class NewareStep:
 		return step_el
 
 
-
 @dataclass
 class CC_CHG(NewareStep):
 	# current_A:float						# charge current (in amps)
