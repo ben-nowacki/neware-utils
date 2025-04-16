@@ -12,7 +12,88 @@ class NewareStep:
 	
 	main_attributes: Optional[dict] = None
 	other_attributes: Optional[dict] = None
+	conditions: Optional[dict] = None
 
+	def add_condition(self, parameter:str, value:float, comparator:str='>', condition:str='next'):
+		"""
+		Apply `condition` when `parameter` `comparator` `value`. E.g., go to `next` when `voltage` `>` `3.6`.
+		
+		Args:
+			parameter (str): {'voltage', 'current', 'time'}
+			value (float): Value to compare parameter against. Units are in {'voltage':volts, 'current':amps, 'temperature':celsius}.
+			comparator (str, optional): {'>', '>=', '<', '<='}. Read as apply condition when 'parameter comparator \
+				value'. Defaults to '>' (parameter greater than value).
+			condition (str, optional): {'next', 'finish', 'protect', 'stop'}. Result of valid condition. Defaults to 'next' (go to next step)
+		"""
+		if not self.other_attributes is None: 
+			raise ValueError(f"{self.step_name} steps cannot have additional conditions.")
+
+		valid_parameters = ['voltage', 'current', 'time']
+		if not parameter in valid_parameters: raise ValueError(f"`parameter` must be one of the following: {valid_parameters}")
+		valid_comparators = ['>', '>=', '<', '<=']
+		if not comparator in valid_comparators: raise ValueError(f"`comparator` must be one of the following: {valid_comparators}")
+		valid_conditions = ['next', 'finish', 'protect', 'stop']
+		if not condition in valid_conditions: raise ValueError(f"`condition` must be one of the following: {valid_conditions}")
+
+		#region: set parameter
+		multiplier = None
+		p_type = None
+		if parameter == 'voltage': 
+			multiplier = 10000
+			p_type = 1
+		elif parameter == 'current': 
+			multiplier = 1000
+			p_type = 2
+		elif parameter == 'time': 
+			multiplier = 1000
+			p_type = 3
+		else:
+			raise ValueError(f"`parameter` must be one of the following: {valid_parameters}")
+		#endregion
+
+		#region set comparator value
+		cmp_type = None
+		#region: certain parameters can only use certain comparators (not sure why)
+		if parameter in ['voltage', 'current']:
+			if comparator == '>=': comparator = '>'
+			elif comparator == '<=': comparator = '<'
+		elif parameter in ['time', ]:
+			if comparator == '>': comparator = '>='
+			elif comparator == '<': comparator = '<='
+		#endregion
+		if comparator == '>': cmp_type = 3
+		elif comparator == '>=': cmp_type = 4
+		elif comparator == '<': cmp_type = 5
+		elif comparator == '<=': cmp_type = 6
+		else: raise ValueError(f"`comparator` must be one of the following: {valid_comparators}")
+		#endregion
+
+		#region: set jump
+		jump = None
+		if condition == 'next': jump = 65526
+		elif condition == 'finish': jump = 6535
+		elif condition == 'protect': jump = 65534
+		elif condition == 'stop': jump = 65533
+		else:
+			raise ValueError(f"`condition` must be one of the following: {valid_conditions}")
+		#endregion
+
+		if not self.conditions:
+			self.conditions = {}
+
+		self.conditions[f'Cnd{len(self.conditions)+1}'] = {
+			'type':str(p_type),
+			'Function':"0",						# TODO
+			'CmpType': str(cmp_type),
+			'Jump_Line': str(jump),
+			'Value':str(int(value * multiplier)),
+			'TimeGoto':"0",						# TODO
+			'GlobleUserID':"2147483647",		# TODO
+			'GLobleType':"1",					# TODO
+			'GlobalVar':"2147483647",			# TODO
+			'Aux':"0",							# TODO
+		}
+		
 	def to_xml(self) -> ET.Element:
 		"""Returns an XML ElementTree.Element object representing the given step. \n
 
@@ -40,16 +121,20 @@ class NewareStep:
 				)
 				for tag, attr in self.other_attributes.items():
 					ET.SubElement(other_el, tag, Value=str(int(attr) if isinstance(attr, Number) else attr))
+			elif self.conditions:
+				other_el = ET.SubElement(
+					limit_el,
+					"Other",
+					CndCount=str(len(self.conditions)),
+				)
+				for tag, attr in self.conditions.items():
+					ET.SubElement(other_el, tag, **attr)
 
 		return step_el
 
 
 @dataclass
 class CC_CHG(NewareStep):
-	# current_A:float						# charge current (in amps)
-	# cutoff_voltage_V:Optional[float]	# cutoff voltage
-	# cutoff_time_s:Optional[float]		# step duration (in seconds)
-
 	@classmethod
 	def create(cls, current:float, cutoff_voltage:Optional[float]=None, step_duration:Optional[float]=None) -> "CC_CHG":
 		"""Creates a constant current charge step (CC CHG)
@@ -79,10 +164,6 @@ class CC_CHG(NewareStep):
 
 @dataclass
 class CC_DCHG(NewareStep):
-	# current_A:float						# discharge current (in amps)
-	# cutoff_voltage_V:Optional[float]	# cutoff voltage
-	# cutoff_time_s:Optional[float]		# step duration (in seconds)
-
 	@classmethod
 	def create(cls, current:float, cutoff_voltage:Optional[float]=None, step_duration:Optional[float]=None) -> "CC_DCHG":
 		"""Creates a constant current discharge step (CC DCHG)
@@ -112,13 +193,6 @@ class CC_DCHG(NewareStep):
 	
 @dataclass
 class CV_CHG(NewareStep):
-	# current_A:float						# charge current (in amps)
-	# voltage_V:float						# charge voltage (in volts)
-
-	# cutoff_current_A:Optional[float]	# cutoff current (in amps)
-	# cutoff_time_s:Optional[float]		# step duration (in seconds)
-
-
 	@classmethod
 	def create(cls, current:float, voltage:float, cutoff_current:Optional[float]=None, step_duration:Optional[float]=None) -> "CV_CHG":
 		"""Creates a constant voltage charge step (CV CHG)
@@ -151,13 +225,6 @@ class CV_CHG(NewareStep):
 	
 @dataclass
 class CV_DCHG(NewareStep):
-	# current_A:float						# discharge current (in amps)
-	# voltage_V:float						# discharge voltage (in volts)
-
-	# cutoff_current_A:Optional[float]	# cutoff current (in amps)
-	# cutoff_time_s:Optional[float]		# step duration (in seconds)
-
-
 	@classmethod
 	def create(cls, current:float, voltage:float, cutoff_current:Optional[float]=None, step_duration:Optional[float]=None) -> "CV_DCHG":
 		"""Creates a constant voltage discharge step (CV DCHG)
@@ -190,12 +257,6 @@ class CV_DCHG(NewareStep):
 
 @dataclass
 class CCCV_CHG(NewareStep):
-	# current_A:float						# charge current (in amps)
-	# voltage_V:float						# charge voltage (in volts)
-
-	# cutoff_current_A:Optional[float]	# cutoff current (in amps)
-	# cutoff_time_s:Optional[float]		# step duration (in seconds)
-
 	@classmethod
 	def create(cls, current:float, voltage:float, cutoff_current:Optional[float]=None, step_duration:Optional[float]=None) -> "CCCV_CHG":
 		"""Creates a constant-current constant-voltage charge step (CCCV CHG)
@@ -228,12 +289,6 @@ class CCCV_CHG(NewareStep):
 	
 @dataclass
 class CCCV_DCHG(NewareStep):
-	# current_A:float						# discharge current (in amps)
-	# voltage_V:float						# discharge voltage (in volts)
-
-	# cutoff_current_A:Optional[float]	# cutoff current (in amps)
-	# cutoff_time_s:Optional[float]		# step duration (in seconds)
-
 	@classmethod
 	def create(cls, current:float, voltage:float, cutoff_current:Optional[float]=None, step_duration:Optional[float]=None) -> "CCCV_DCHG":
 		"""Creates a constant-current constant-voltage discharge step (CCCV DCHG)
@@ -266,9 +321,6 @@ class CCCV_DCHG(NewareStep):
 	
 @dataclass
 class CYCLE(NewareStep):
-	# start_step: int
-	# num_cycles: int
-	
 	@classmethod
 	def create(cls, start_step:int, num_cycles:int) -> "CYCLE":
 		"""Creates a cycle step (CYCLE)
@@ -292,8 +344,6 @@ class CYCLE(NewareStep):
 
 @dataclass
 class REST(NewareStep):
-	# cutoff_time_s:Optional[float]		# step duration (in seconds)
-
 	@classmethod
 	def create(cls, step_duration:float) -> "REST":
 		"""Creates a rest step (REST)

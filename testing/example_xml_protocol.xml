@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="GB2312"?>
+<root>
+  <config type="Step File" version="17" client_version="BTS Client 8.0.0.478(2024.06.24)(R3)" date="20250331103354" Guid="ae166dfc-e3ce-42af-8503-e09661703d42">
+    <Head_Info>
+      <Operate Value="66" />
+      <Scale Value="1" />
+      <Start_Step Value="1" Hide_Ctrl_Step="0" />
+      <Creator Value="Ben Nowacki" />
+      <Remark Value="all step modes, cc chg, cv chg, cccv chg, cc dchg, cv dchg, cccv dchg, rest, cycle, pause, end" />
+      <RateType Value="105" />
+      <MultCap Value="4320000" />
+    </Head_Info>
+    <Whole_Prt>
+      <Protect>
+        <Main>
+          <Volt>
+            <Upper Value="38000" />
+            <Lower Value="18000" />
+          </Volt>
+          <Curr>
+            <Upper Value="5000" />
+          </Curr>
+        </Main>
+        <Aux>
+          <Volt>
+            <Upper Value="38000" />
+            <Lower Value="18000" />
+          </Volt>
+          <Temp>
+            <Upper Value="300" />
+            <Lower Value="200" />
+          </Temp>
+        </Aux>
+      </Protect>
+      <Record>
+        <Main>
+          <Time Value="1000" />
+        </Main>
+        <Aux>
+          <Time Value="1000" />
+          <Volt Value="50" />
+          <Temp Value="10" />
+        </Aux>
+      </Record>
+    </Whole_Prt>
+    <Step_Info Num="10">
+      <Step1 Step_ID="1" Step_Type="1">
+        <Limit>
+          <Main>
+            <Curr Value="1200" />
+            <Rate Value="1" />
+            <Time Value="600000" />
+            <Stop_Volt Value="36000" />
+          </Main>
+        </Limit>
+      </Step1>
+      <Step2 Step_ID="2" Step_Type="3">
+        <Limit>
+          <Main>
+            <Curr Value="1200" />
+            <Rate Value="1" />
+            <Volt Value="36000" />
+            <Time Value="60000" />
+            <Stop_Curr Value="60" />
+            <Stop_Rate Value="0.05" />
+          </Main>
+        </Limit>
+      </Step2>
+      <Step3 Step_ID="3" Step_Type="7">
+        <Limit>
+          <Main>
+            <Curr Value="1200" />
+            <Rate Value="1" />
+            <Volt Value="36000" />
+            <Time Value="300000" />
+            <Stop_Curr Value="60" />
+            <Stop_Rate Value="0.05" />
+          </Main>
+        </Limit>
+      </Step3>
+      <Step4 Step_ID="4" Step_Type="2">
+        <Limit>
+          <Main>
+            <Curr Value="2400" />
+            <Rate Value="2" />
+            <Time Value="600000" />
+            <Stop_Volt Value="20000" />
+          </Main>
+        </Limit>
+      </Step4>
+      <Step5 Step_ID="5" Step_Type="19">
+        <Limit>
+          <Main>
+            <Curr Value="2400" />
+            <Rate Value="2" />
+            <Volt Value="20000" />
+            <Time Value="60000" />
+            <Stop_Curr Value="60" />
+            <Stop_Rate Value="0.05" />
+          </Main>
+        </Limit>
+      </Step5>
+      <Step6 Step_ID="6" Step_Type="20">
+        <Limit>
+          <Main>
+            <Curr Value="2400" />
+            <Rate Value="2" />
+            <Volt Value="20000" />
+            <Time Value="300000" />
+            <Stop_Curr Value="60" />
+            <Stop_Rate Value="0.05" />
+          </Main>
+        </Limit>
+      </Step6>
+      <Step7 Step_ID="7" Step_Type="4">
+        <Limit>
+          <Main>
+            <Time Value="3600000" />
+          </Main>
+        </Limit>
+      </Step7>
+      <Step8 Step_ID="8" Step_Type="5">
+        <Limit>
+          <Other>
+            <Start_Step Value="1" />
+            <Cycle_Count Value="10" />
+          </Other>
+        </Limit>
+      </Step8>
+      <Step9 Step_ID="9" Step_Type="13">
+      </Step9>
+      <Step10 Step_ID="10" Step_Type="6">
+      </Step10>
+    </Step_Info>
+    <SMBUS>
+      <SMBUS_Info Num="0" AdjacentInterval="0" />
+    </SMBUS>
+  </config>
+</root>
